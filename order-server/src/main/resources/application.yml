@@ -1,11 +1,48 @@
+  #端口
 server:
   port: 7777
+  #该服务适配mysql基础新乡
 spring:
   datasource:
     url: jdbc:mysql://localhost:3306/mythread?characterEncoding=utf-8
     driver-class-name: com.mysql.jdbc.Driver
     username: root
     password: root
+    #服务对应名称
   application:
     name: 订单服务
-
+    #redis基础配置
+  redis:
+    host: localhost
+    port: 6379
+    #rabbitmq基础配置
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: xwl
+    password: 258000
+    virtual-host: /xwl #当前账户下对应虚拟机权限
+    #交换机配置
+    template:
+      retry:
+        initial-interval: 10000ms #接收消息回执间隔时间,如果每接收到消息回执,则每隔10秒访问一次(单位:ms)
+        enabled: true #开启重试机制
+        max-interval: 30000ms #最大回执时,支持30秒以内,超过该时间即不进行回执
+        max-attempts: 2 #每次回执访问后间隔以2倍时间后再次访问
+    #监听器
+    listener:
+      type: simple
+      simple:
+        default-requeue-rejected: false #监听器抛出异常时拒绝的消息重新放置队列
+        #none无应答确认发送
+        #manual意味着监听者必须通过调用Channel.basicAck()来告知所有的消息。
+        #auto意味着容器会自动应答，除非MessageListener抛出异常，这是默认配置方式。
+        acknowledge-mode: manual
+        #一个消费者最多可处理的nack消息数量，(如果有事务的话，必须大于等于transaction数量)
+        prefetch: 1
+        concurrency: 5 #消费者监听队列,分5个队列进行消费
+#mybatis-plus配置
+mybatis-plus:
+  configuration:
+    #开启驼峰命名自动映射
+    map-underscore-to-camel-case: true

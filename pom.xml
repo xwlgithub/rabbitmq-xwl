@@ -21,6 +21,7 @@
         <xwl.feign.version>1.4.7.RELEASE</xwl.feign.version>
         <xwl.mybatis.version>3.4.2</xwl.mybatis.version>
         <xwl.rabbitmq.version>2.3.8.RELEASE</xwl.rabbitmq.version>
+        <xwl.mybatis-plus.version>3.4.2</xwl.mybatis-plus.version>
     </properties>
     <!--版本控制-->
     <dependencyManagement>
@@ -82,6 +83,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-amqp</artifactId>
             <version>${xwl.rabbitmq.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>${xwl.mybatis-plus.version}</version>
         </dependency>
     </dependencies>
     <!--加载环境-->
