@@ -89,6 +89,7 @@
             <artifactId>mybatis-plus-boot-starter</artifactId>
             <version>${xwl.mybatis-plus.version}</version>
         </dependency>
+
     </dependencies>
     <!--加载环境-->
     <build>

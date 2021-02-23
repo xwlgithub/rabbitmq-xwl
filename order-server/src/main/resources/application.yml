@@ -4,7 +4,7 @@ server:
   #该服务适配mysql基础新乡
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/mythread?characterEncoding=utf-8
+    url: jdbc:mysql://localhost:3306/mythread?characterEncoding=utf-8&useSSL=false
     driver-class-name: com.mysql.jdbc.Driver
     username: root
     password: root
@@ -12,9 +12,9 @@ spring:
   application:
     name: 订单服务
     #redis基础配置
-  redis:
-    host: localhost
-    port: 6379
+#  redis:
+#    host: localhost
+#    port: 6379
     #rabbitmq基础配置
   rabbitmq:
     host: localhost
@@ -26,9 +26,10 @@ spring:
     template:
       retry:
         initial-interval: 10000ms #接收消息回执间隔时间,如果每接收到消息回执,则每隔10秒访问一次(单位:ms)
-        enabled: true #开启重试机制
+        enabled: false #开启重试机制
         max-interval: 30000ms #最大回执时,支持30秒以内,超过该时间即不进行回执
         max-attempts: 2 #每次回执访问后间隔以2倍时间后再次访问
+      mandatory: true #如果无法找到合适的队列存储消息时,回调用basic.return方法将消息返还生产者
     #监听器
     listener:
       type: simple
@@ -41,8 +42,19 @@ spring:
         #一个消费者最多可处理的nack消息数量，(如果有事务的话，必须大于等于transaction数量)
         prefetch: 1
         concurrency: 5 #消费者监听队列,分5个队列进行消费
-#mybatis-plus配置
+    publisher-confirm-type: correlated #交互类型匹配
+    publisher-returns: true
+  #mybatis-plus配置
 mybatis-plus:
   configuration:
     #开启驼峰命名自动映射
     map-underscore-to-camel-case: true
+
+#交换机极队列路由建配置参数
+#paramMq:
+#  serverExchange: server_exchange
+#  serverQueue: server_queue
+#  serverRoutKey: item.#
+#  serverDealExchange: server_deal_exchange
+#  serverDealQueue: server_deal_queue
+#  serverDealRoutKey: dealKey

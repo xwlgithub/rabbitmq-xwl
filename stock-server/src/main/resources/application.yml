@@ -2,10 +2,50 @@ server:
   port: 8888
 spring:
   datasource:
-    url: jdbc:mysql://localhost:3306/mythread?characterEncoding=utf-8
+    url: jdbc:mysql://localhost:3306/mythread?characterEncoding=utf-8&useSSL=false
     driver-class-name: com.mysql.jdbc.Driver
     username: root
     password: root
   application:
     name: 库存服务
-
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: xwl
+    password: 258000
+    virtual-host: /xwl #当前账户下对应虚拟机权限
+    #交换机配置
+    template:
+      retry:
+        initial-interval: 10000ms #接收消息回执间隔时间,如果每接收到消息回执,则每隔10秒访问一次(单位:ms)
+        enabled: false #开启重试机制
+        max-interval: 30000ms #最大回执时,支持30秒以内,超过该时间即不进行回执
+        max-attempts: 2 #每次回执访问后间隔以2倍时间后再次访问
+      mandatory: true #如果无法找到合适的队列存储消息时,回调用basic.return方法将消息返还生产者
+    #监听器
+    listener:
+      type: simple
+      simple:
+        default-requeue-rejected: false #监听器抛出异常时拒绝的消息重新放置队列
+        #none无应答确认发送
+        #manual意味着监听者必须通过调用Channel.basicAck()来告知所有的消息。
+        #auto意味着容器会自动应答，除非MessageListener抛出异常，这是默认配置方式。
+        acknowledge-mode: manual
+        #一个消费者最多可处理的nack消息数量，(如果有事务的话，必须大于等于transaction数量)
+        prefetch: 1
+        concurrency: 5 #消费者监听队列,分5个队列进行消费
+    publisher-confirm-type: correlated #交互类型匹配
+    publisher-returns: true
+  #mybatis-plus配置
+mybatis-plus:
+  configuration:
+    #开启驼峰命名自动映射
+    map-underscore-to-camel-case: true
+#交换机极队列路由建配置参数
+paramMq:
+  serverExchange: server_exchange
+  serverQueue: server_queue
+  serverRoutKey: item.#
+  serverDealExchange: server_deal_exchange
+  serverDealQueue: server_deal_queue
+  serverDealRoutKey: dealKey
