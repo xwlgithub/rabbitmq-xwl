@@ -23,5 +23,5 @@ public class RabbitParamUtils {
     //@Value("${paramMq.serverDealQueue}")
     public static String DEAL_QUEUE="server_deal_queue";
     // @Value("${paramMq.serverDealRoutKey}")
-    public static String DEAL_ROUTKEY="dealKey";
+    public static String DEAL_ROUTKEY="DelayKey";
 }

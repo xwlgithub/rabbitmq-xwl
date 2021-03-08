@@ -2,6 +2,7 @@ package com.xwl;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+//import org.springframework.cloud.openfeign.EnableFeignClients;
 
 /**
  * @Auther: 薛
@@ -9,6 +10,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * @Description:
  */
 @SpringBootApplication
+//@EnableFeignClients(basePackages = {"com.xwl"})
 public class StockApplication {
 
     public static void main(String[] args) {

@@ -6,6 +6,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @Auther: 薛
  * @Date: 2021/2/19 15:06
@@ -21,7 +24,15 @@ public class RabbitmqConfig {
     //声明主队列
     @Bean("serverTopicQueue")
     public Queue topicServerQueue() {
-        return QueueBuilder.durable(RabbitParamUtils.ITEM_QUEUE).build();
+        //绑定死信队列,用于消息消费时间时存储废弃消息的队列
+        Map<String, Object> args = new HashMap<>();
+        //声明死信交换器
+        args.put("x-dead-letter-exchange", RabbitParamUtils.DEAL_TOPIC_EXCHANGE);
+        //声明死信路由键(绑定)
+        args.put("x-dead-letter-routing-key", "DelayKey");
+        //声明主队列如果发生堵塞或其它-10秒自动消费消息
+        args.put("x-message-ttl",10000);
+        return QueueBuilder.durable(RabbitParamUtils.ITEM_QUEUE).withArguments(args).build();
     }
     //主队列绑定交换机以及-路由(此处采用TOPC通配符)
     @Bean
@@ -29,15 +40,20 @@ public class RabbitmqConfig {
                                      @Qualifier("serverTopicExchange") Exchange exchange) {
         return BindingBuilder.bind(queue).to(exchange).with(RabbitParamUtils.ITEM_ROUTKEY).noargs();
     }
-    //声明补单
+    //声明死信队列
     @Bean("dealQueue")
     public Queue dealQueue() {
         return QueueBuilder.durable(RabbitParamUtils.DEAL_QUEUE).build();
     }
+    //声明死信交换机
+    @Bean("serverDealExchange")
+    public Exchange dealExchange(){
+        return ExchangeBuilder.topicExchange("server_deal_exchange").durable(true).build();
+    }
     //死信队列绑定交换机以及路由key(指定路由键key值)
     @Bean
     public Binding dealQueueExchange(@Qualifier("dealQueue") Queue queue,
-                                     @Qualifier("serverTopicExchange") Exchange exchange) {
-        return BindingBuilder.bind(queue).to(exchange).with(RabbitParamUtils.ITEM_ROUTKEY).noargs();
+                                     @Qualifier("serverDealExchange") Exchange exchange) {
+        return BindingBuilder.bind(queue).to(exchange).with(RabbitParamUtils.DEAL_ROUTKEY).noargs();
     }
 }

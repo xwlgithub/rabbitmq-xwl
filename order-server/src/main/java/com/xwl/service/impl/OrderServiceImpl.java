@@ -34,6 +34,7 @@ public class OrderServiceImpl implements IOrderService {
     //消息发送API
     private RabbitTemplate rabbitTemplate;
     private OrderMapper orderMapper;
+    private RedisTemplate redisTemplate;
     /**
      * 订单业务处理
      * @param userName
@@ -44,6 +45,8 @@ public class OrderServiceImpl implements IOrderService {
     public Boolean placeOrder(String userName) throws RuntimeException{
         //随机生成订单号--这里举例为UUID
         String orderId = UUID.randomUUID().toString();
+        //默认为未消费
+        this.redisTemplate.opsForValue().set(orderId,false);
         //消息发送
         OrderInfo orderInfo = new OrderInfo();
         orderInfo.setUserName(userName);
@@ -54,10 +57,10 @@ public class OrderServiceImpl implements IOrderService {
         try {
             isSuccess= orderMapper.insert(orderInfo);
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("订单保存失败~~~~~~~~~");
         }
         if (isSuccess<0){
-            throw  new RuntimeException("创建订单失败!1");
+            throw  new RuntimeException("创建订单失败!");
         }
         //发送消息到消费者
         sendMessages(orderId);
@@ -72,7 +75,7 @@ public class OrderServiceImpl implements IOrderService {
         JSONObject jsonObect = new JSONObject();
         jsonObect.put("orderId", orderId);
         String msg = jsonObect.toJSONString();
-        System.out.println("msg:" + msg);
+        System.out.println("要发送的消息:" + msg);
         //消息创建为json格式 发送
         MessageBuilder.withBody(msg.getBytes())
                 .setContentType(MessageProperties.CONTENT_TYPE_JSON)
@@ -93,11 +96,18 @@ public class OrderServiceImpl implements IOrderService {
         String id = correlationData.getId();
         System.out.println("消息ID"+id);
         if (ack){
-            //int x=1/0;
-            System.out.println("消息发送成功并且消费方成功消费");
+            System.out.println("消息发送至消费者接收成功,是否消费成功待消费者业务处理~");
+//            Boolean isTrueOrFalse = (Boolean)redisTemplate.opsForValue().get(id);
+//            if (isTrueOrFalse){
+//                System.out.println("消息发送成功并且消费方成功消费");
+//            }else {
+//                System.out.println("该消息"+id+"\n\n"+"未被消费者成功消费");
+//                //删除该消息id记录日志当前消息未成功消费
+//                this.orderMapper.deleteByOrderCode(id);
+//            }
         }else {
+            System.out.println("消息未成功发送至消费者,补发消息");
             sendMessages(id);
-            System.out.println("补发消息");
         }
     }
 }

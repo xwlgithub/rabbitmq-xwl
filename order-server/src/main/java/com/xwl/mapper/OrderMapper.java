@@ -12,4 +12,7 @@ public interface OrderMapper extends BaseMapper<OrderInfo> {
 
     @Select("select *  from order_info where order_code=#{orderCode}")
     public OrderInfo findOrderInfoByOrderCode(@Param("orderCode")String orderCode);
+
+    @Select("delete from order_info where order_code=#{id}")
+    void deleteByOrderCode(@Param("id") String id);
 }
