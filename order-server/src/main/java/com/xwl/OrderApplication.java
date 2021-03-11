@@ -1,5 +1,6 @@
 package com.xwl;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.openfeign.EnableFeignClients;
@@ -10,7 +11,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
  * @Description:
  */
 @SpringBootApplication
-@EnableFeignClients
+//@EnableFeignClients
 public class OrderApplication {
     /**
      * 启动类

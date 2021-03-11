@@ -9,6 +9,6 @@ public interface OrderServerFeignApi {
     String SERVER_API = "/client";
 
     String DELE_ORDER_INFO_BYCODE=SERVER_API+"/deleOrderInfoByCode";
-    @PostMapping("DELE_ORDER_INFO_BYCODE")
+    @PostMapping(DELE_ORDER_INFO_BYCODE)
     Boolean  deleOrderInfoByCode(@RequestParam("orderCode")String orderCode);
 }

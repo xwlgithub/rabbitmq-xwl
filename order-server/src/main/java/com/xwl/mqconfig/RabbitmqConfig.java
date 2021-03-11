@@ -24,14 +24,14 @@ public class RabbitmqConfig {
     public Exchange topicExchange() {
         return ExchangeBuilder.topicExchange(RabbitParamUtils.ITEM_TOPIC_EXCHANGE).durable(true).build();
     }
-    //声明主队列
+    //声明主队列->下辖绑定死信队列
     @Bean("serverTopicQueue")
     public Queue topicServerQueue() {
         //绑定死信队列,用于消息消费时间时存储废弃消息的队列
         Map<String, Object> args = new HashMap<>();
-        //声明死信交换器
+        //声明死信交换机
         args.put("x-dead-letter-exchange", RabbitParamUtils.DEAL_TOPIC_EXCHANGE);
-        //声明死信路由键(绑定)
+        //声明死信路由键(绑定)->用于队列接收路由指定键
         args.put("x-dead-letter-routing-key", "DelayKey");
         //声明主队列如果发生堵塞或其它-10秒自动消费消息
         args.put("x-message-ttl",10000);

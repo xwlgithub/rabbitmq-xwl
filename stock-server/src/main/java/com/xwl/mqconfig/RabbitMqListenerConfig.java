@@ -3,6 +3,7 @@ package com.xwl.mqconfig;
 import com.alibaba.fastjson.JSONObject;
 import com.rabbitmq.client.Channel;
 import com.xwl.entity.StokOrder;
+import com.xwl.feign.OrderServerFeignApi;
 import com.xwl.mapper.StokMapper;
 import org.springframework.amqp.core.Message;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
@@ -30,14 +31,14 @@ public class RabbitMqListenerConfig {
     private StokMapper stokMapper;
     @Autowired
     private RedisTemplate redisTemplate;
-//    @Autowired
-//    private OrderServerFeignApi orderServerFeignApi;
+    @Autowired
+    private OrderServerFeignApi orderServerFeignApi;
 
     @PostConstruct
     public void init() {
         this.stokMapper = stokMapper;
         this.redisTemplate = redisTemplate;
-        //this.orderServerFeignApi = orderServerFeignApi;
+        this.orderServerFeignApi = orderServerFeignApi;
     }
 
     /**
@@ -94,7 +95,7 @@ public class RabbitMqListenerConfig {
              * false:   消费失败,放至死信队列,待相关人员核实或其他方式成功消费..
              */
             if (!(Boolean) this.redisTemplate.opsForValue().get(msg)) {
-               // this.orderServerFeignApi.deleOrderInfoByCode(msg);
+                this.orderServerFeignApi.deleOrderInfoByCode(msg);
                 channel.basicNack(message.getMessageProperties().getDeliveryTag(), false, false);
                 return;
             }

@@ -21,6 +21,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class OrderController {
     private IOrderService orderService;
 
+    /**
+     * 下单接口
+     * @param userName
+     * @return
+     */
     @PostMapping("placeOrder")
     public R<Boolean> placeOrder(@RequestParam(value = "userName",required = true) String userName){
         if (StringUtils.isEmpty(userName))return R.errors(ExceptionEnum.LACK_MUST_PARAMS);

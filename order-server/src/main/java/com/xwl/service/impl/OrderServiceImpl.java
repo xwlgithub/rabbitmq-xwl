@@ -20,6 +20,7 @@ import org.springframework.messaging.handler.annotation.Headers;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Map;
 import java.util.UUID;
 
@@ -43,6 +44,7 @@ public class OrderServiceImpl implements IOrderService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public Boolean placeOrder(String userName) throws RuntimeException{
+
         //随机生成订单号--这里举例为UUID
         String orderId = UUID.randomUUID().toString();
         //默认为未消费
@@ -62,6 +64,7 @@ public class OrderServiceImpl implements IOrderService {
         if (isSuccess<0){
             throw  new RuntimeException("创建订单失败!");
         }
+        //int x=1/0;
         //发送消息到消费者
         sendMessages(orderId);
         return true;

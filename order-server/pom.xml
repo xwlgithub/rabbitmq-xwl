@@ -33,10 +33,15 @@
             <artifactId>spring-boot-starter-data-redis</artifactId>
             <version>2.3.5.RELEASE</version>
         </dependency>
+        <!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-openfeign-core -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
-            <artifactId>spring-cloud-starter-feign</artifactId>
+            <artifactId>spring-cloud-openfeign-core</artifactId>
+            <version>2.2.3.RELEASE</version>
         </dependency>
+
+
+
     </dependencies>
     <build>
         <plugins>

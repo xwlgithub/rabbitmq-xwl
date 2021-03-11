@@ -4,6 +4,9 @@ import com.xwl.feign.OrderServerFeignApi;
 import com.xwl.mapper.OrderMapper;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -14,12 +17,15 @@ import org.springframework.web.bind.annotation.RestController;
 @AllArgsConstructor
 @RestController
 @SuppressWarnings("all")
+@Service
+@Component
 public class OrderServerFeignImpl implements OrderServerFeignApi {
     @Autowired
     private OrderMapper orderMapper;
 
 
     @Override
+    @PostMapping(DELE_ORDER_INFO_BYCODE)
     public Boolean deleOrderInfoByCode(String orderCode) {
         try {
             orderMapper.deleteByOrderCode(orderCode);
